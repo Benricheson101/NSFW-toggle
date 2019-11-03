@@ -3,7 +3,7 @@ You may have noticed that Discord does not have an option to make NSFW channels 
 
 This bot has one purpose, and one purpose only: to enable or disable NSFW on channels.
 
-## Commands:
+## Commands
 **Command**: `@NSFW-Toggle nsfw`\
 **Aliases**: `name-nsfw`, `not-nsfw`, `toggle-nsfw`\
 **Description**: Toggle NSFW for the current channel\
@@ -12,5 +12,5 @@ This bot has one purpose, and one purpose only: to enable or disable NSFW on cha
 
 ![Demo](https://where-am-i.why-am-i-he.re/Kr8GWY.gif)
 
-## Bot Info:
+## Bot Info
 The provided bot invitation link grants the bot "MANAGE_CHANNELS" and "SEND_MESSAGES". Optionally, giving the bot a role with "MANAGE_MESSAGES" will allow the bot to delete the command that you sent.
