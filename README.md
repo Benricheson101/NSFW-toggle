@@ -13,4 +13,4 @@ This bot has one purpose, and one purpose only: to enable or disable NSFW on cha
 ![Demo](https://where-am-i.why-am-i-he.re/Kr8GWY.gif)
 
 ## Bot Info
-The provided bot invitation link grants the bot "MANAGE_CHANNELS" and "SEND_MESSAGES". Optionally, giving the bot a role with "MANAGE_MESSAGES" will allow the bot to delete the command that you sent.
+The provided bot invitation link grants the bot "MANAGE_CHANNELS" and "SEND_MESSAGES". Optionally, giving the bot "MANAGE_MESSAGES" will allow the bot to delete the command that you sent.
