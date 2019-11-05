@@ -26,10 +26,7 @@ client.on("message", async (message) => {
 	case ("toggle-nsfw"):
 	case ("toggle"):
 	case ("nsfw"): {
-		if (!message.member.hasPermission(["MANAGE_CHANNELS"], false, true, true)) {
-			console.log("perms");
-			break;
-		}
+		if (!message.member.hasPermission(["MANAGE_CHANNELS"], false, true, true)) break;
 		if (message.guild.me.hasPermission(["MANAGE_MESSAGES"])) message.delete();
 
 		await message.channel.setNSFW(!(message.channel.nsfw), `Requested by: ${message.author.username}#${message.author.discriminator} (${message.author.id})`)
@@ -40,7 +37,6 @@ client.on("message", async (message) => {
 						if (e.message !== "Unknown Message") return console.error(e);
 					})
 			);
-
 		break;
 	}
 	default: {
