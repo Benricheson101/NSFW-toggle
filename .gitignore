@@ -89,3 +89,4 @@ typings/
 
 # IDE Files
 .idea/*
+/Icon/*

@@ -24,6 +24,7 @@ client.on("message", async (message) => {
 	case ("make-nsfw"):
 	case ("not-nsfw"):
 	case ("toggle-nsfw"):
+	case ("toggle"):
 	case ("nsfw"): {
 		if (!message.member.hasPermission(["MANAGE_CHANNELS"], false, true, true)) {
 			console.log("perms");
