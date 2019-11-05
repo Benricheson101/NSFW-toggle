@@ -8,8 +8,9 @@ This bot has one purpose, and one purpose only: to enable or disable NSFW on cha
 **Aliases**: `name-nsfw`, `not-nsfw`, `toggle-nsfw`\
 **Description**: Toggle NSFW for the current channel\
 **Permission**: You must have at least "MANAGE_CHANNELS" to use this command.\
-**Example**:
+**Examples**:
 
+![Demo-iOS](https://i.imgur.com/nMcpERT.gif)
 ![Demo](https://where-am-i.why-am-i-he.re/Kr8GWY.gif)
 
 ## Bot Info
