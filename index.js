@@ -21,8 +21,6 @@ client.on("message", async (message) => {
 	if (command[0] !== `<@${client.user.id}>`) return;
 
 	switch (command.slice(1).join()) {
-	case ("make-nsfw"):
-	case ("not-nsfw"):
 	case ("toggle-nsfw"):
 	case ("toggle"):
 	case ("nsfw"): {
