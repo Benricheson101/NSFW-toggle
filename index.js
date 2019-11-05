@@ -8,7 +8,7 @@ client.on("ready", async () => {
 	console.info(`${client.user.username} is now online!`);
 	await client.user.setPresence({
 		game: {
-			name: `for @${client.user.username} nsfw`,
+			name: `for @${client.user.username} toggle`,
 			type: "WATCHING"
 		},
 		status: "dnd"
