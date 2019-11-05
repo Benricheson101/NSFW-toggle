@@ -1,5 +1,5 @@
 # NSFW-Toggle
-You may have noticed that Discord does not have an option to make NSFW channels on its iOS app. According to a developer, ["Apple requested we remove the NSFW toggle"](https://www.reddit.com/r/discordapp/comments/dcpn5e/). Because of this, iOS users (like myself) have not been able to make NSFW channels for a while.
+You may have noticed that Discord does not have an option to make NSFW channels on its iOS app. According to a developer, ["Apple requested we remove the NSFW toggle"](https://www.reddit.com/r/discordapp/comments/dcpn5e/why_can_you_set_a_channel_as_nsfw_on_android_but/f2bxovg/). Because of this, iOS users (like myself) have not been able to make NSFW channels for a while.
 
 This bot has one purpose, and one purpose only: to enable or disable NSFW on channels.
 
