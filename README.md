@@ -1,5 +1,4 @@
 ![Codacy grade](https://img.shields.io/codacy/grade/10047c7016d14306a8745db384bdb621?style=for-the-badge)
-![Travis (.com)](https://img.shields.io/travis/com/Benricheson101/NSFW-toggle?style=for-the-badge)
 # NSFW-Toggle
 You may have noticed that Discord does not have an option to make NSFW channels on its iOS app. According to a developer, ["Apple requested we remove the NSFW toggle"](https://www.reddit.com/r/discordapp/comments/dcpn5e/why_can_you_set_a_channel_as_nsfw_on_android_but/f2bxovg/). Because of this, iOS users (like myself) have not been able to make NSFW channels for a while.
 
