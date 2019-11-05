@@ -25,6 +25,11 @@ client.on("message", async (message) => {
 	case ("toggle"):
 	case ("nsfw"): {
 		if (!message.member.hasPermission(["MANAGE_CHANNELS"], false, true, true)) break;
+		if (!message.guild.me.hasPermission(["MANAGE_CHANNELS"], false, true, true)) {
+			message.channel.send(":x: I do not have permission to toggle NSFW for this channel. Please make sure that I have `MANAGE_CHANNELS`")
+				.then((m) => m.delete(5000));
+			break;
+		}
 		if (message.guild.me.hasPermission(["MANAGE_MESSAGES"])) message.delete();
 
 		await message.channel.setNSFW(!(message.channel.nsfw), `Requested by: ${message.author.username}#${message.author.discriminator} (${message.author.id})`)

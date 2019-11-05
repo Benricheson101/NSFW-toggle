@@ -5,7 +5,7 @@ This bot has one purpose, and one purpose only: to enable or disable NSFW on cha
 
 ## Commands
 **Command**: `@NSFW-Toggle nsfw`\
-**Aliases**: `name-nsfw`, `not-nsfw`, `toggle-nsfw`\
+**Aliases**: `toggle`, `toggle-nsfw`\
 **Description**: Toggle NSFW for the current channel\
 **Permission**: You must have at least "MANAGE_CHANNELS" to use this command.\
 **Example**:
