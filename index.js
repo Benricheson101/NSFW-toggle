@@ -32,7 +32,7 @@ client.on("message", async (message) => {
 		}
 		if (message.guild.me.hasPermission(["MANAGE_MESSAGES"])) message.delete();
 		try {
-			await message.channel.setNSFW(!(message.channel.nsfw), `Requested by: ${message.author.username}#${message.author.discriminator} (${message.author.id})`)
+			await message.channel.setNSFW(!(message.channel.nsfw), `Requested by: ${message.author.username}#${message.author.discriminator} (${message.author.id})`);
 		} catch (e) {
 			if (e.message === "Missing Permissions") {
 				message.channel.send(":x: I do not have permission to toggle NSFW for this channel. Please make sure that I have `MANAGE_CHANNELS`");
