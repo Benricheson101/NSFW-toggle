@@ -17,6 +17,7 @@ client.on("ready", async () => {
 
 client.on("message", async (message) => {
 	if (message.author.bot) return;
+	if (!message.member.hasPermission(["MANAGE_CHANNELS"], false, true, true)) return;
 	let command = message.content.split(" ");
 	if (command[0] !== `<@${client.user.id}>`) return;
 
@@ -24,22 +25,28 @@ client.on("message", async (message) => {
 	case ("toggle-nsfw"):
 	case ("toggle"):
 	case ("nsfw"): {
-		if (!message.member.hasPermission(["MANAGE_CHANNELS"], false, true, true)) break;
 		if (!message.guild.me.hasPermission(["MANAGE_CHANNELS"], false, true, true)) {
 			message.channel.send(":x: I do not have permission to toggle NSFW for this channel. Please make sure that I have `MANAGE_CHANNELS`")
 				.then((m) => m.delete(5000));
 			break;
 		}
 		if (message.guild.me.hasPermission(["MANAGE_MESSAGES"])) message.delete();
-
-		await message.channel.setNSFW(!(message.channel.nsfw), `Requested by: ${message.author.username}#${message.author.discriminator} (${message.author.id})`)
-			.then(
-				await message.channel.send(`Successfully ${message.channel.nsfw ? "unmarked" : "marked"} <#${message.channel.id}> as NSFW.`)
-					.then((m) => m.delete(5000))
-					.catch((e) => {
-						if (e.message !== "Unknown Message") return console.error(e);
-					})
-			);
+		try {
+			await message.channel.setNSFW(!(message.channel.nsfw), `Requested by: ${message.author.username}#${message.author.discriminator} (${message.author.id})`)
+		} catch (e) {
+			if (e.message === "Missing Permissions") {
+				message.channel.send(":x: I do not have permission to toggle NSFW for this channel. Please make sure that I have `MANAGE_CHANNELS`");
+				break;
+			}
+			console.error(e);
+			message.channel.send(":x: An unhandled error occurred. Please try again.");
+			break;
+		}
+		await message.channel.send(`Successfully ${message.channel.nsfw ? "" : "un"}marked <#${message.channel.id}> as NSFW.`)
+			.then((m) => m.delete(5000))
+			.catch((e) => {
+				if (e.message !== "Unknown Message") return console.error(e);
+			});
 		break;
 	}
 	default: {
