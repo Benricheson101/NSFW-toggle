@@ -5,7 +5,10 @@ const client = new Discord.Client({
 require("dotenv").config();
 
 client.on("ready", async () => {
-	console.info(`${client.user.username} is now online!`);
+	console.info(`${client.user.username} is now online!
+    Guilds: ${client.guilds.size}
+    Channels: ${client.channels.size}
+    Users: ${client.users.size}`);
 	await client.user.setPresence({
 		game: {
 			name: `for @${client.user.username} toggle`,
@@ -19,9 +22,11 @@ client.on("message", async (message) => {
 	if (message.author.bot) return;
 	if (!message.member.hasPermission(["MANAGE_CHANNELS"], false, true, true)) return;
 	let command = message.content.split(" ");
-	if (command[0] !== `<@${client.user.id}>`) return;
+  const prefixRegex = new RegExp(`^<@!?${client.user.id}>`);
+  if (!prefixRegex.test(command[0])) return;
 
-	switch (command.slice(1).join()) {
+  const subcmd = command.join(" ").replace(prefixRegex, "".split(" ")).trim();
+	switch (subcmd) {
 	case ("toggle-nsfw"):
 	case ("toggle"):
 	case ("nsfw"): {
