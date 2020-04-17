@@ -2,7 +2,9 @@ const Discord = require("discord.js");
 const client = new Discord.Client({
 	disableEveryone: true
 });
+const fetch = require("node-fetch");
 require("dotenv").config();
+
 
 client.on("ready", async () => {
 	console.info(`${client.user.username} is now online!
@@ -16,6 +18,23 @@ client.on("ready", async () => {
 		},
 		status: "dnd"
 	});
+
+// bot list stuff
+if (process.env.NODE_ENV === "production" && process.env.BOD_KEY) {
+  setInterval(() => {
+    fetch(`https://bots.ondiscord.xyz/bot-api/bots/${client.user.id}/guilds`, {
+      method: "post",
+      headers: {
+        Authorization: process.env.BOD_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ guildCount: client.guilds.size })
+    })
+      .then(console.log)
+      .catch(client.error);
+  }, 120000);
+}
+
 });
 
 client.on("message", async (message) => {
