@@ -38,7 +38,7 @@ if (process.env.NODE_ENV === "production" && process.env.BOD_KEY) {
 });
 
 client.on("message", async (message) => {
-	if (message.author.bot) return;
+	if (message.author.bot || message.channel.type !== "text") return;
 	if (!message.member.hasPermission(["MANAGE_CHANNELS"], false, true, true)) return;
 	let command = message.content.split(" ");
   const prefixRegex = new RegExp(`^<@!?${client.user.id}>`);
