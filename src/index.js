@@ -89,7 +89,7 @@ ${toggleCommands.map((c) => '`' + c + '`').join('\n')}
 ${helpCommands.map((c) => '`' + c + '`').join('\n')}
 **Used**: ${client.commandsUsed.help} times since the last restart
         `)
-        .setFooter('Note: users must have `MANAGE_CHANNELS` or higher to use any of the bot\'s comands')
+        .setFooter('Note: users must have `MANAGE_CHANNELS` or higher to use any of the bot\'s commands')
     )
   }
 
