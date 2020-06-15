@@ -16,6 +16,14 @@ const client = new Client({
 client.commandsUsed = { help: 0, toggle: 0 }
 
 client.on('ready', async () => {
+  client.user.setPresence({
+    activity: {
+      type: 'PLAYING',
+      name: `@${client.user.username} help | ${client.guilds.cache.size} servers`
+    },
+    status: 'dnd'
+  })
+
   console.log(`Ready! Logged in as ${client.user.tag}\nServers: ${client.guilds.cache.size}`)
 
   if (process.env.NODE_ENV === 'production') {
