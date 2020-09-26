@@ -1,10 +1,11 @@
 {
   "name": "nsfw-toggle",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "src/launch.js",
   "description": "you horny fuckers",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV=development nodemon"
   },
   "type": "module",
   "author": "",
