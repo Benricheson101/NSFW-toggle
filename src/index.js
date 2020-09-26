@@ -3,7 +3,10 @@ import {
   MessageEmbed,
   Intents
 } from 'discord.js'
+import { promisify } from 'util'
 import fetch from 'node-fetch'
+
+const wait = promisify(setTimeout)
 
 const client = new Client({
   disableMentions: 'all',
@@ -27,7 +30,8 @@ client.on('ready', async () => {
 
   runAtInterval(setPresence, 60000)
 
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' && client.shard.ids[0] === 0) {
+    if (client.uptime >= 30000) await wait(30000) // wait for shards to spawn
     runAtInterval(() => postToList(client), 120000)
   }
 })
