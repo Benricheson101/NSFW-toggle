@@ -137,7 +137,10 @@ client.login(process.env.TOKEN)
 async function postToList (client) {
   return fetch(`https://bots.ondiscord.xyz/bot-api/bots/${client.user.id}/guilds`, {
     method: 'post',
-    headers: { authorization: process.env.BOD_KEY },
+    headers: {
+      Authorization: process.env.BOD_KEY,
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({ guildCount: await totalGuilds() })
   })
 }
