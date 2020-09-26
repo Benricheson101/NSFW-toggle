@@ -31,7 +31,7 @@ client.on('ready', async () => {
   runAtInterval(setPresence, 60000)
 
   if (process.env.NODE_ENV === 'production' && client.shard.ids[0] === 0) {
-    if (client.uptime >= 30000) await wait(30000) // wait for shards to spawn
+    if (client.uptime <= 30000) await wait(30000) // wait for shards to spawn
     runAtInterval(() => postToList(client), 120000)
   }
 })
