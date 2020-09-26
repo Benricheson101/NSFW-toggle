@@ -113,7 +113,7 @@ client.on('message', async (msg) => {
         value: '> **Description**: Join the support server'
       }])
       .setColor('#0f4275')
-      .setFooter(`Shard: ${client.shard.ids[0]}/${client.shard.count} | Servers: ${await totalGuilds()} | Commands Used: ${await totalCmdsUsed()}`)
+      .setFooter(`Shard: ${client.shard.ids[0]}/${client.shard.count - 1} | Servers: ${await totalGuilds()} | Commands Used: ${await totalCmdsUsed()}`)
 
     return msg.channel.send(embed)
   } else if (command === 'invite') {
