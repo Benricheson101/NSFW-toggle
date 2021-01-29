@@ -30,8 +30,8 @@ pub async fn create_cmds(ctx: &Context, app_id: u64) {
         &ctx.http,
         guild_id,
         app_id,
-        |i: &mut CreateInteraction| i
-            .name("nsfw")
+        |i: &mut CreateInteraction| {
+            i.name("nsfw")
             .description("Enable or disable NSFW for a channel")
             .create_interaction_option(|o: &mut CreateInteractionOption| {
                 o.name("channel")
@@ -45,5 +45,6 @@ pub async fn create_cmds(ctx: &Context, app_id: u64) {
                     .kind(ApplicationCommandOptionType::Boolean)
                     .required(false)
             })
+        }
     ).await.unwrap();
 }
