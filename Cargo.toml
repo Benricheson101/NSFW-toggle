@@ -1,0 +1,26 @@
+[package]
+name = "nsfw_toggle"
+version = "0.1.0"
+authors = ["Ben Richeson <benricheson101@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+dotenv = "0.15.0"
+serde_json = "1.0.61"
+
+[dependencies.serenity]
+git = "https://github.com/serenity-rs/serenity.git"
+branch = "current" # interaction stuff is only on `current` branch
+default-features = false
+features = [
+  "cache",
+  "client",
+  "gateway",
+  "model",
+  "rustls_backend",
+  "unstable_discord_api", # for interaction stuff
+]
+
+[dependencies.tokio]
+version = "1"
+features = ["macros", "rt-multi-thread"]
