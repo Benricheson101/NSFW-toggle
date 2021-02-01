@@ -6,14 +6,17 @@ edition = "2018"
 
 [dependencies]
 dotenv = "0.15.0"
+if_chain = "1.0.1"
+lazy_static = "1.4.0"
 serde_json = "1.0.61"
 
 [dependencies.serenity]
-git = "https://github.com/serenity-rs/serenity.git"
-branch = "current" # interaction stuff is only on `current` branch
+# git = "https://github.com/serenity-rs/serenity.git"
+# branch = "current" # interaction stuff is only on `current` branch
+git = "https://github.com/acdenisSK/serenity" # this fork includes Member permission field for interactions
+branch = "new_member_fields"
 default-features = false
 features = [
-  "cache",
   "client",
   "gateway",
   "model",
@@ -23,4 +26,4 @@ features = [
 
 [dependencies.tokio]
 version = "1"
-features = ["macros", "rt-multi-thread"]
+features = ["macros", "rt-multi-thread", "time"]
