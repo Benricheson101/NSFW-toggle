@@ -1,9 +1,27 @@
 mod cmds;
 mod util;
 
-use lazy_static::lazy_static;
 pub use util::responses::*;
+
+use cmds::{
+    ping::*,
+    nsfw::*,
+    support::*,
+    invite::*,
+};
+use lazy_static::lazy_static;
 use tokio::time::sleep;
+use serenity::{
+    async_trait,
+    model::{
+        channel::Message,
+        gateway::{Activity, Ready},
+        guild::{Guild, GuildUnavailable},
+        interactions::Interaction,
+        user::OnlineStatus,
+    },
+    prelude::*,
+};
 use std::{
     env,
     sync::{
@@ -12,22 +30,7 @@ use std::{
     },
     time::Duration,
 };
-use serenity::{
-    async_trait,
-    model::{
-        gateway::{Activity, Ready},
-        guild::{Guild, GuildUnavailable},
-        interactions::{
-            Interaction,
-        },
-        user::OnlineStatus,
-    },
-    prelude::*,
-};
-use cmds::{
-    ping::*,
-    nsfw::*,
-};
+use regex::Regex;
 
 /// The number of guilds the bot is in
 pub struct GuildCount;
@@ -41,12 +44,55 @@ lazy_static! {
         .expect("Expected `APPLICATION_ID`")
         .parse()
         .unwrap();
+
+    pub static ref BOT_INVITE_URL: String = env::var("BOT_INVITE_URL")
+        .unwrap_or(
+            format!(
+                "https://discord.com/api/oauth2/authorize?client_id={}&permissions=2064&scope=bot%20applications.commands",
+                *APPLICATION_ID
+            )
+        );
+
+    pub static ref SUPPORT_INVITE_URL: String = env::var("SUPPORT_INVITE_URL")
+        .unwrap_or(":x: The bot does not have a support server invite configured".to_string());
+
+    static ref MENTION_REGEX: Regex = Regex::new(&format!("^<@!?{}>\\s?(help|commands|toggle|nsfw|invite|support)$", *APPLICATION_ID)).unwrap();
 }
 
 struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
+    async fn guild_create(&self, ctx: Context, _guild: Guild) {
+        let guild_count = {
+            let data_read = ctx.data.read().await;
+            data_read.get::<GuildCount>().expect("Expected GuildCount in TypeMap.").clone()
+        };
+
+        guild_count.fetch_add(1, Ordering::SeqCst);
+    }
+
+    async fn guild_delete(&self, ctx: Context, _guild: GuildUnavailable) {
+        let guild_count = {
+            let data_read = ctx.data.read().await;
+            data_read.get::<GuildCount>().expect("Expected GuildCount in TypeMap.").clone()
+        };
+
+        guild_count.fetch_sub(1, Ordering::SeqCst);
+    }
+
+    async fn message(&self, ctx: Context, msg: Message) {
+        if MENTION_REGEX.is_match(msg.content.as_str()) {
+            msg.channel_id.say(
+                &ctx.http,
+                &format!(
+                    ":information_source: I use slash commands now! You can view a list of my commands by pressing the `/` key.\n> If no commands appear, you may need to reauthorize with this link: <{}>",
+                    *BOT_INVITE_URL
+                )
+            ).await.ok();
+        }
+    }
+
     async fn ready(&self, ctx: Context, ready: Ready) {
         if let Some(shard) = ready.shard {
             if shard[0] == 0 {
@@ -77,27 +123,11 @@ impl EventHandler for Handler {
             match data.name.as_str() {
                 "ping" => ping(ctx, interaction, *APPLICATION_ID).await,
                 "nsfw" => nsfw(ctx, interaction, *APPLICATION_ID).await,
+                "support" => support(ctx, interaction, *APPLICATION_ID).await,
+                "invite" => invite(ctx, interaction, *APPLICATION_ID).await,
                 &_ => (),
             };
         }
-    }
-
-    async fn guild_create(&self, ctx: Context, _guild: Guild) {
-        let guild_count = {
-            let data_read = ctx.data.read().await;
-            data_read.get::<GuildCount>().expect("Expected GuildCount in TypeMap.").clone()
-        };
-
-        guild_count.fetch_add(1, Ordering::SeqCst);
-    }
-
-    async fn guild_delete(&self, ctx: Context, _guild: GuildUnavailable) {
-        let guild_count = {
-            let data_read = ctx.data.read().await;
-            data_read.get::<GuildCount>().expect("Expected GuildCount in TypeMap.").clone()
-        };
-
-        guild_count.fetch_sub(1, Ordering::SeqCst);
     }
 }
 
@@ -108,7 +138,7 @@ async fn main() {
     let token = env::var("DISCORD_TOKEN")
         .expect("Expected `DISCORD_TOKEN`");
 
-    let mut client = Client::builder(&token)
+    let mut client: Client = Client::builder(&token)
         .event_handler(Handler)
         .await
         .expect("Err creating client");

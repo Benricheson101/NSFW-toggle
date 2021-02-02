@@ -102,19 +102,15 @@ pub async fn nsfw(ctx: Context, interaction: Interaction, _app_id: u64) {
             Ok(_) => format!(":white_check_mark: Successfully **{}** NSFW for <#{}>", if new_status {"enabled"} else {"disabled"}, channel.id),
 
             Err(err) => {
-                match err {
-                    SerenityError::Http(err) => {
-                        match *err {
-                            HttpError::UnsuccessfulRequest(err) => {
-                                match err.error.code {
-                                    50013 => ":x: I do not have permission to edit this channel. Make sure I have `MANAGE_CHANNELS`".to_string(),
-                                    _ => ":x: An error occurred. Please try again.".to_string(),
-                                }
-                            },
-                            _ => ":x: An error occurred. Please try again.".to_string(),
-                        }
-                    },
-                    _ => ":x: An error occurred. Please try again.".to_string(),
+                if_chain! {
+                    if let SerenityError::Http(err) = err;
+                    if let HttpError::UnsuccessfulRequest(err) = *err;
+                    if err.error.code == 50013;
+                    then {
+                        ":x: I do not have permission to edit this channel. Make sure I have `MANAGE_CHANNELS`".to_string()
+                    } else {
+                        ":x: An error occurred. Please try again".to_string()
+                    }
                 }
             },
         };
