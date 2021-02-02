@@ -1,16 +1,18 @@
 mod cmds;
 mod util;
 
-pub use util::responses::*;
-
-use cmds::{
-    ping::*,
-    nsfw::*,
-    support::*,
-    invite::*,
+use std::{
+    env,
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc,
+    },
+    time::Duration,
 };
+
+use cmds::{invite::*, nsfw::*, ping::*, support::*};
 use lazy_static::lazy_static;
-use tokio::time::sleep;
+use regex::Regex;
 use serenity::{
     async_trait,
     model::{
@@ -22,15 +24,8 @@ use serenity::{
     },
     prelude::*,
 };
-use std::{
-    env,
-    sync::{
-        Arc,
-        atomic::{AtomicUsize, Ordering},
-    },
-    time::Duration,
-};
-use regex::Regex;
+use tokio::time::sleep;
+pub use util::responses::*;
 
 /// The number of guilds the bot is in
 pub struct GuildCount;
@@ -66,7 +61,10 @@ impl EventHandler for Handler {
     async fn guild_create(&self, ctx: Context, _guild: Guild) {
         let guild_count = {
             let data_read = ctx.data.read().await;
-            data_read.get::<GuildCount>().expect("Expected GuildCount in TypeMap.").clone()
+            data_read
+                .get::<GuildCount>()
+                .expect("Expected GuildCount in TypeMap.")
+                .clone()
         };
 
         guild_count.fetch_add(1, Ordering::SeqCst);
@@ -75,7 +73,10 @@ impl EventHandler for Handler {
     async fn guild_delete(&self, ctx: Context, _guild: GuildUnavailable) {
         let guild_count = {
             let data_read = ctx.data.read().await;
-            data_read.get::<GuildCount>().expect("Expected GuildCount in TypeMap.").clone()
+            data_read
+                .get::<GuildCount>()
+                .expect("Expected GuildCount in TypeMap.")
+                .clone()
         };
 
         guild_count.fetch_sub(1, Ordering::SeqCst);
@@ -99,18 +100,26 @@ impl EventHandler for Handler {
                 util::create_cmds::create_cmds(&ctx, ready.user.id.0).await;
             }
 
-            println!("Shard {} ready with {} guilds", shard[0], ready.guilds.len());
+            println!(
+                "Shard {} ready with {} guilds",
+                shard[0],
+                ready.guilds.len()
+            );
         }
 
         loop {
             let guild_count = {
                 let data_read = ctx.data.read().await;
-                data_read.get::<GuildCount>().expect("Expected GuildCount in TypeMap.").clone()
+                data_read
+                    .get::<GuildCount>()
+                    .expect("Expected GuildCount in TypeMap.")
+                    .clone()
             };
 
-            let activity = Activity::listening(
-                &format!("for /nsfw | {} servers", guild_count.load(Ordering::SeqCst))
-            );
+            let activity = Activity::listening(&format!(
+                "for /nsfw | {} servers",
+                guild_count.load(Ordering::SeqCst)
+            ));
 
             ctx.set_presence(Some(activity), OnlineStatus::Idle).await;
 
@@ -135,8 +144,7 @@ impl EventHandler for Handler {
 async fn main() {
     dotenv::dotenv().ok();
 
-    let token = env::var("DISCORD_TOKEN")
-        .expect("Expected `DISCORD_TOKEN`");
+    let token = env::var("DISCORD_TOKEN").expect("Expected `DISCORD_TOKEN`");
 
     let mut client: Client = Client::builder(&token)
         .event_handler(Handler)
@@ -156,7 +164,7 @@ async fn main() {
 
 // TODO: add notice if you ping the bot to use slash commands
 // TODO: setup rustfmt config
-// TODO: make command creation have a dev and prod mode (switch between guild and global)
-// TODO: cmds
+// TODO: make command creation have a dev and prod mode (switch between guild
+// and global) TODO: cmds
 //   TODO: support
 //   TODO: help

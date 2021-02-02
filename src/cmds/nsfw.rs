@@ -1,9 +1,7 @@
-use crate::default_response;
 use if_chain::if_chain;
 use serde_json::value::Value;
 use serenity::{
     builder::EditChannel,
-    Error as SerenityError,
     http::error::Error as HttpError,
     model::{
         channel::{Channel, ChannelType, GuildChannel},
@@ -11,7 +9,10 @@ use serenity::{
         permissions::Permissions,
     },
     prelude::*,
+    Error as SerenityError,
 };
+
+use crate::default_response;
 
 pub async fn nsfw(ctx: Context, interaction: Interaction, _app_id: u64) {
     if let Some(data) = &interaction.data {
@@ -30,7 +31,8 @@ pub async fn nsfw(ctx: Context, interaction: Interaction, _app_id: u64) {
                 &ctx,
                 &interaction,
                 ":x: You do not have permission to use this command.",
-            ).await;
+            )
+            .await;
 
             return;
         }
@@ -46,7 +48,11 @@ pub async fn nsfw(ctx: Context, interaction: Interaction, _app_id: u64) {
             }
         }
 
-        let mut channel: GuildChannel = match ctx.http.get_channel(channel_id).await {
+        let mut channel: GuildChannel = match ctx
+            .http
+            .get_channel(channel_id)
+            .await
+        {
             Ok(ch) => match ch {
                 Channel::Guild(ch) if ch.kind == ChannelType::Text => ch,
                 _ => {
@@ -54,10 +60,11 @@ pub async fn nsfw(ctx: Context, interaction: Interaction, _app_id: u64) {
                         &ctx,
                         &interaction,
                         ":x: You can only mark text channels as NSFW.",
-                    ).await;
+                    )
+                    .await;
 
                     return;
-                }
+                },
             },
             Err(_) => {
                 default_response(
@@ -67,7 +74,7 @@ pub async fn nsfw(ctx: Context, interaction: Interaction, _app_id: u64) {
                 ).await;
 
                 return;
-            }
+            },
         };
 
         let mut new_status = !channel.is_nsfw();
@@ -87,19 +94,24 @@ pub async fn nsfw(ctx: Context, interaction: Interaction, _app_id: u64) {
                 &interaction,
                 &format!(
                     ":x: That channel has already been marked as {}",
-                    if channel.is_nsfw() {"NSFW"} else {"SFW"}
-                )
-            ).await;
+                    if channel.is_nsfw() { "NSFW" } else { "SFW" }
+                ),
+            )
+            .await;
 
             return;
         }
 
-        let res = channel.edit(&ctx.http, |e: &mut EditChannel| {
-            e.nsfw(new_status)
-        }).await;
+        let res = channel
+            .edit(&ctx.http, |e: &mut EditChannel| e.nsfw(new_status))
+            .await;
 
         let msg = match res {
-            Ok(_) => format!(":white_check_mark: Successfully **{}** NSFW for <#{}>", if new_status {"enabled"} else {"disabled"}, channel.id),
+            Ok(_) => format!(
+                ":white_check_mark: Successfully **{}** NSFW for <#{}>",
+                if new_status { "enabled" } else { "disabled" },
+                channel.id
+            ),
 
             Err(err) => {
                 if_chain! {
@@ -115,10 +127,6 @@ pub async fn nsfw(ctx: Context, interaction: Interaction, _app_id: u64) {
             },
         };
 
-        default_response(
-            &ctx,
-            &interaction,
-            &msg,
-        ).await;
+        default_response(&ctx, &interaction, &msg).await;
     }
 }
