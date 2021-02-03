@@ -60,18 +60,18 @@ impl EventHandler for Handler {
 
         guild_count.fetch_add(1, Ordering::SeqCst);
 
-        #[cfg(feature = "server_log")]
-        {
-            let is_ready = data_read
-                .get::<IsReady>()
-                .unwrap()
-                .clone()
-                .load(Ordering::Relaxed);
+        // #[cfg(feature = "server_log")]
+        // {
+        //     let is_ready = data_read
+        //         .get::<IsReady>()
+        //         .unwrap()
+        //         .clone()
+        //         .load(Ordering::Relaxed);
 
-            if is_ready {
-                logger::server_log(&ctx, ServerLogAction::Join(&guild)).await;
-            }
-        }
+        //     if is_ready {
+        //         logger::server_log(&ctx, ServerLogAction::Join(&guild)).await;
+        //     }
+        // }
     }
 
     async fn guild_delete(&self, ctx: Context, guild: GuildUnavailable) {
@@ -218,3 +218,5 @@ async fn main() {
 // and global)
 // TODO: post server count to bot lists
 // TODO: get rid of warnings if not using default features?
+// TODO: cache guild id instead of guild count
+// TODO: make sure guild join log waits until after startup
