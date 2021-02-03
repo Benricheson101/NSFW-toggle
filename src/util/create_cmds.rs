@@ -1,12 +1,9 @@
-use serde_json::Value;
 use serenity::{
-    builder::CreateInteraction,
     model::{
         id::GuildId,
         interactions::{ApplicationCommandOptionType, Interaction},
     },
     prelude::*,
-    utils::hashmap_to_json_map,
 };
 
 pub async fn create_cmds(ctx: &Context, app_id: u64) {

@@ -49,7 +49,7 @@ lazy_static! {
         );
 
     pub static ref SUPPORT_INVITE_URL: String = env::var("SUPPORT_INVITE_URL")
-        .unwrap_or(":x: The bot does not have a support server invite configured".to_string());
+        .unwrap_or(String::from(":x: The bot does not have a support server invite configured"));
 
     static ref MENTION_REGEX: Regex = Regex::new(&format!("^<@!?{}>\\s?(help|commands|toggle|nsfw|invite|support)$", *APPLICATION_ID)).unwrap();
 }
