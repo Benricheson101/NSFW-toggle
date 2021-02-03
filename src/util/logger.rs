@@ -49,6 +49,7 @@ pub async fn cmd_log(ctx: &Context, interaction: &Interaction) {
     }
 }
 
+#[cfg(feature = "server_log")]
 pub async fn server_log<'a>(ctx: &Context, action: ServerLogAction<'a>) {
     let config = {
         let data_read = ctx.data.read().await;
@@ -81,12 +82,14 @@ pub async fn server_log<'a>(ctx: &Context, action: ServerLogAction<'a>) {
         .ok();
 }
 
+#[cfg(feature = "server_log")]
 pub enum ServerLogAction<'a> {
     Join(&'a Guild),
     Leave(&'a GuildUnavailable),
 }
 
 // TODO: less clone
+#[cfg(feature = "cmd_log")]
 fn interaction_to_string(interaction: &Interaction) -> String {
     let mut full_cmd = Vec::new();
 
@@ -101,6 +104,7 @@ fn interaction_to_string(interaction: &Interaction) -> String {
     format!("/{}", full_cmd.join(" "))
 }
 
+#[cfg(feature = "cmd_log")]
 fn _interaction_to_string(
     ops: &Vec<ApplicationCommandInteractionDataOption>,
 ) -> String {

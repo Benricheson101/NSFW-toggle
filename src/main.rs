@@ -217,3 +217,4 @@ async fn main() {
 // TODO: make command creation have a dev and prod mode (switch between guild
 // and global)
 // TODO: post server count to bot lists
+// TODO: get rid of warnings if not using default features?
