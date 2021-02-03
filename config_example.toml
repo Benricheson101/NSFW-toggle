@@ -1,0 +1,19 @@
+bot_token = ""
+support_server = ""
+bot_invite = ""
+
+# only required if compiled with default or `cmd_log` features
+[cmd_log]
+id = "" # webhook id
+token = "" # webhook token
+
+# only required if compiled with default or `server_log` features
+[server_log]
+id = "" # webhook id
+token = "" # webhook token
+
+# only required if compiled with `cmd_log`, `server_log` or default features
+[emojis]
+cmd = "" # emoji | only required with default or `cmd_log` feature
+join_server = "" # emoji | only required with default or `server_log` feature
+leave_server = "" # emoji | only required with default or `server_log` feature

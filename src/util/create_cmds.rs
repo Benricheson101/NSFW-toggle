@@ -1,17 +1,13 @@
 use serenity::{
     model::{
-        id::GuildId,
         interactions::{ApplicationCommandOptionType, Interaction},
     },
     prelude::*,
 };
 
 pub async fn create_cmds(ctx: &Context, app_id: u64) {
-    let guild_id = GuildId::from(579466138992508928);
-
-    Interaction::create_guild_application_command(
+    Interaction::create_global_application_command(
         &ctx.http,
-        guild_id,
         app_id,
         |i| {
             i.name("ping").description(
@@ -22,9 +18,8 @@ pub async fn create_cmds(ctx: &Context, app_id: u64) {
     .await
     .unwrap();
 
-    Interaction::create_guild_application_command(
+    Interaction::create_global_application_command(
         &ctx.http,
-        guild_id,
         app_id,
         |i| {
             i.name("nsfw")
@@ -48,9 +43,8 @@ pub async fn create_cmds(ctx: &Context, app_id: u64) {
     .await
     .unwrap();
 
-    Interaction::create_guild_application_command(
+    Interaction::create_global_application_command(
         &ctx.http,
-        guild_id,
         app_id,
         |i| {
             i.name("support")
@@ -60,9 +54,8 @@ pub async fn create_cmds(ctx: &Context, app_id: u64) {
     .await
     .unwrap();
 
-    Interaction::create_guild_application_command(
+    Interaction::create_global_application_command(
         &ctx.http,
-        guild_id,
         app_id,
         |i| {
             i.name("invite")

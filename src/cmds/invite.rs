@@ -1,7 +1,15 @@
 use serenity::{model::interactions::Interaction, prelude::*};
 
-use crate::{default_response, BOT_INVITE_URL};
+use crate::{default_response, BotConfig};
 
 pub async fn invite(ctx: Context, interaction: Interaction, _app_id: u64) {
-    default_response(&ctx, &interaction, BOT_INVITE_URL.as_ref()).await;
+    let config = {
+        let data_read = ctx.data.read().await;
+        data_read
+            .get::<BotConfig>()
+            .expect("Expected `BotConfig` in TypeMap.")
+            .clone()
+    };
+
+    default_response(&ctx, &interaction, &config.bot_invite).await;
 }
