@@ -2,7 +2,7 @@ use serenity::{model::interactions::Interaction, prelude::*};
 
 use crate::{default_response, BotConfig};
 
-pub async fn invite(ctx: Context, interaction: Interaction, _app_id: u64) {
+pub async fn invite(ctx: &Context, interaction: &Interaction, _app_id: u64) {
     let config = {
         let data_read = ctx.data.read().await;
         data_read

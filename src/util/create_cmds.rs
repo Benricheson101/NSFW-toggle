@@ -23,9 +23,7 @@ pub async fn create_cmds(ctx: &Context, app_id: u64) {
             })
             .create_interaction_option(|o| {
                 o.name("enabled")
-                    .description(
-                        "Choose whether or not NSFW should be enabled.",
-                    )
+                    .description("Whether or not NSFW should be enabled.")
                     .kind(ApplicationCommandOptionType::Boolean)
                     .required(false)
             })

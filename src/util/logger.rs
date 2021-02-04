@@ -50,7 +50,11 @@ pub async fn cmd_log(ctx: &Context, interaction: &Interaction) {
 }
 
 #[cfg(feature = "server_log")]
-pub async fn server_log<'a>(ctx: &Context, action: ServerLogAction<'a>) {
+pub async fn server_log<'a>(
+    ctx: &Context,
+    action: ServerLogAction<'a>,
+    total: usize,
+) {
     let config = {
         let data_read = ctx.data.read().await;
         data_read
@@ -61,10 +65,10 @@ pub async fn server_log<'a>(ctx: &Context, action: ServerLogAction<'a>) {
 
     let msg = match action {
         ServerLogAction::Join(g) => {
-            format!("{} `{}`", config.emojis.join_server, g.id.0)
+            format!("{} `{}` | `{}`", config.emojis.join_server, g.id.0, total)
         },
         ServerLogAction::Leave(g) => {
-            format!("{} `{}`", config.emojis.leave_server, g.id.0)
+            format!("{} `{}` | `{}`", config.emojis.leave_server, g.id.0, total)
         },
     };
 

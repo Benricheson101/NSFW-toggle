@@ -5,7 +5,7 @@ use serenity::{
     prelude::*,
 };
 
-pub async fn ping(ctx: Context, interaction: Interaction, app_id: u64) {
+pub async fn ping(ctx: &Context, interaction: &Interaction, app_id: u64) {
     let now = Instant::now();
 
     interaction

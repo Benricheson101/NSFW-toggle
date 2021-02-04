@@ -14,7 +14,7 @@ use serenity::{
 
 use crate::default_response;
 
-pub async fn nsfw(ctx: Context, interaction: Interaction, _app_id: u64) {
+pub async fn nsfw(ctx: &Context, interaction: &Interaction, _app_id: u64) {
     if let Some(data) = &interaction.data {
         let perms = if_chain! {
             if let Some(perms) = &interaction.member.permissions;

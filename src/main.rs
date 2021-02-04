@@ -1,16 +1,13 @@
+#![allow(unused_imports)]
+
 mod cmds;
 mod util;
 
-use std::{
-    sync::{
-        atomic::{AtomicBool, AtomicUsize, Ordering},
-        Arc,
-    },
-    time::Duration,
-};
+use std::{sync::Arc, time::Duration};
 
 use bot_cfg::BotConfig;
 use cmds::{invite::*, nsfw::*, ping::*, support::*};
+#[cfg(any(feature = "cmd_log", feature = "server_log"))]
 use logger::ServerLogAction;
 use regex::Regex;
 use serenity::{
@@ -28,23 +25,19 @@ use tokio::time::sleep;
 pub use util::responses::*;
 use util::{bot_cfg, logger};
 
-/// The number of guilds the bot is in
-pub struct GuildCount;
+// cache stuff
+
+/// The guilds the bot is in
+pub struct Guilds;
 /// The application ID (used for slash command/interaction stuff)
 pub struct ApplicationId;
-/// If the bot is ready
-pub struct IsReady;
-
-impl TypeMapKey for GuildCount {
-    type Value = Arc<AtomicUsize>;
-}
 
 impl TypeMapKey for ApplicationId {
     type Value = Arc<u64>;
 }
 
-impl TypeMapKey for IsReady {
-    type Value = Arc<AtomicBool>;
+impl TypeMapKey for Guilds {
+    type Value = Arc<Mutex<Vec<u64>>>;
 }
 
 struct Handler;
@@ -53,58 +46,58 @@ struct Handler;
 impl EventHandler for Handler {
     async fn guild_create(&self, ctx: Context, guild: Guild) {
         let data_read = ctx.data.read().await;
-        let guild_count = data_read
-            .get::<GuildCount>()
-            .expect("Expected GuildCount in TypeMap.")
+
+        let guilds = data_read
+            .get::<Guilds>()
+            .expect("Expected Guilds in TypeMap.")
             .clone();
 
-        guild_count.fetch_add(1, Ordering::SeqCst);
+        let mut g = guilds.lock().await;
 
-        // #[cfg(feature = "server_log")]
-        // {
-        //     let is_ready = data_read
-        //         .get::<IsReady>()
-        //         .unwrap()
-        //         .clone()
-        //         .load(Ordering::Relaxed);
+        if !g.contains(&guild.id.0) {
+            g.push(guild.id.0);
 
-        //     if is_ready {
-        //         logger::server_log(&ctx, ServerLogAction::Join(&guild)).await;
-        //     }
-        // }
+            #[cfg(feature = "server_log")]
+            logger::server_log(&ctx, ServerLogAction::Join(&guild), g.len())
+                .await;
+        }
     }
 
     async fn guild_delete(&self, ctx: Context, guild: GuildUnavailable) {
-        #[cfg(feature = "server_log")]
-        logger::server_log(&ctx, ServerLogAction::Leave(&guild)).await;
+        // Guild is unavailable due to an outage but still in the guild
+        if guild.unavailable {
+            return;
+        }
 
-        let guild_count = {
-            let data_read = ctx.data.read().await;
-            data_read
-                .get::<GuildCount>()
-                .expect("Expected GuildCount in TypeMap.")
-                .clone()
-        };
+        let data_read = ctx.data.read().await;
+        let guilds = data_read
+            .get::<Guilds>()
+            .expect("Expected `Guilds` in TypeMap.")
+            .clone();
 
-        guild_count.fetch_sub(1, Ordering::SeqCst);
+        let mut g = guilds.lock().await;
+
+        if let Some(pos) = g.iter().position(|x| *x == guild.id.0) {
+            g.remove(pos);
+
+            #[cfg(feature = "server_log")]
+            logger::server_log(&ctx, ServerLogAction::Leave(&guild), g.len())
+                .await;
+        }
     }
 
     async fn message(&self, ctx: Context, msg: Message) {
-        let (config, client_id) = {
-            let data_read = ctx.data.read().await;
+        let data_read = ctx.data.read().await;
 
-            let config = data_read
-                .get::<BotConfig>()
-                .expect("Expected `BotConfig` in TypeMap.")
-                .clone();
+        let config = data_read
+            .get::<BotConfig>()
+            .expect("Expected `BotConfig` in TypeMap.")
+            .clone();
 
-            let client_id = data_read
-                .get::<ApplicationId>()
-                .expect("Expected `ApplicationId` in TypeMap.")
-                .clone();
-
-            (config, client_id)
-        };
+        let client_id = data_read
+            .get::<ApplicationId>()
+            .expect("Expected `ApplicationId` in TypeMap.")
+            .clone();
 
         let mention_regex = Regex::new(&format!(
             "^<@!?{}>\\s?(help|commands|toggle|nsfw|invite|support)$",
@@ -124,6 +117,22 @@ impl EventHandler for Handler {
     }
 
     async fn ready(&self, ctx: Context, ready: Ready) {
+        {
+            let data_read = ctx.data.read().await;
+
+            let mut new_guilds =
+                ready.guilds.iter().map(|x| x.id().0).collect::<Vec<u64>>();
+
+            let g = data_read
+                .get::<Guilds>()
+                .expect("Expected `Guilds` in TypeMap.")
+                .clone();
+
+            let mut guild_cache = g.lock().await;
+
+            guild_cache.append(&mut new_guilds);
+        }
+
         if let Some(shard) = ready.shard {
             if shard[0] == 0 {
                 util::create_cmds::create_cmds(&ctx, ready.user.id.0).await;
@@ -131,10 +140,6 @@ impl EventHandler for Handler {
                 {
                     let mut data = ctx.data.write().await;
                     data.insert::<ApplicationId>(Arc::new(ready.user.id.0));
-                    data.get::<IsReady>()
-                        .unwrap()
-                        .clone()
-                        .swap(true, Ordering::Relaxed);
                 }
             }
 
@@ -148,15 +153,19 @@ impl EventHandler for Handler {
         loop {
             let guild_count = {
                 let data_read = ctx.data.read().await;
+
                 data_read
-                    .get::<GuildCount>()
-                    .expect("Expected GuildCount in TypeMap.")
+                    .get::<Guilds>()
+                    .expect("Expected `Guilds` in TypeMap.")
                     .clone()
+                    .lock()
+                    .await
+                    .len()
             };
 
             let activity = Activity::listening(&format!(
-                "for /nsfw | {} servers",
-                guild_count.load(Ordering::SeqCst)
+                "/nsfw | {} servers",
+                guild_count,
             ));
 
             ctx.set_presence(Some(activity), OnlineStatus::Idle).await;
@@ -166,9 +175,6 @@ impl EventHandler for Handler {
     }
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
-        #[cfg(feature = "cmd_log")]
-        logger::cmd_log(&ctx, &interaction).await;
-
         if let Some(data) = &interaction.data {
             let id = {
                 let data_read = &ctx.data.read().await;
@@ -180,12 +186,15 @@ impl EventHandler for Handler {
             };
 
             match data.name.as_str() {
-                "ping" => ping(ctx, interaction, id).await,
-                "nsfw" => nsfw(ctx, interaction, id).await,
-                "support" => support(ctx, interaction, id).await,
-                "invite" => invite(ctx, interaction, id).await,
+                "ping" => ping(&ctx, &interaction, id).await,
+                "nsfw" => nsfw(&ctx, &interaction, id).await,
+                "support" => support(&ctx, &interaction, id).await,
+                "invite" => invite(&ctx, &interaction, id).await,
                 &_ => (),
             };
+
+            #[cfg(feature = "cmd_log")]
+            logger::cmd_log(&ctx, &interaction).await;
         }
     }
 }
@@ -204,9 +213,8 @@ async fn main() {
     {
         let mut data = client.data.write().await;
 
-        data.insert::<GuildCount>(Arc::new(AtomicUsize::new(0)));
         data.insert::<BotConfig>(Arc::new(cfg));
-        data.insert::<IsReady>(Arc::new(AtomicBool::new(false)));
+        data.insert::<Guilds>(Arc::new(Mutex::new(Vec::new())));
     }
 
     if let Err(e) = client.start_autosharded().await {
@@ -218,5 +226,3 @@ async fn main() {
 // and global)
 // TODO: post server count to bot lists
 // TODO: get rid of warnings if not using default features?
-// TODO: cache guild id instead of guild count
-// TODO: make sure guild join log waits until after startup
