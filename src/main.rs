@@ -5,7 +5,7 @@ mod util;
 
 use std::{sync::Arc, time::Duration};
 
-use bot_cfg::BotConfig;
+pub use bot_cfg::BotConfig;
 use cmds::{invite::*, nsfw::*, ping::*, support::*};
 #[cfg(any(feature = "cmd_log", feature = "server_log"))]
 use logger::ServerLogAction;
@@ -23,7 +23,7 @@ use serenity::{
 };
 use tokio::time::sleep;
 pub use util::responses::*;
-use util::{bot_cfg, logger};
+use util::{bot_cfg, bot_list, logger};
 
 // cache stuff
 
@@ -31,6 +31,8 @@ use util::{bot_cfg, logger};
 pub struct Guilds;
 /// The application ID (used for slash command/interaction stuff)
 pub struct ApplicationId;
+/// The number of shards spawned
+pub struct Shards;
 
 impl TypeMapKey for ApplicationId {
     type Value = Arc<u64>;
@@ -38,6 +40,10 @@ impl TypeMapKey for ApplicationId {
 
 impl TypeMapKey for Guilds {
     type Value = Arc<Mutex<Vec<u64>>>;
+}
+
+impl TypeMapKey for Shards {
+    type Value = Arc<u64>;
 }
 
 struct Handler;
@@ -140,6 +146,7 @@ impl EventHandler for Handler {
                 {
                     let mut data = ctx.data.write().await;
                     data.insert::<ApplicationId>(Arc::new(ready.user.id.0));
+                    data.insert::<Shards>(Arc::new(shard[1]));
                 }
             }
 
@@ -148,6 +155,13 @@ impl EventHandler for Handler {
                 shard[0],
                 ready.guilds.len()
             );
+
+            #[cfg(feature = "bot_list_guild_count")]
+            if shard[0] == shard[1] - 1 {
+                bot_list::bod(&ctx).await;
+                bot_list::del(&ctx).await;
+                println!("Last shard ready");
+            }
         }
 
         loop {

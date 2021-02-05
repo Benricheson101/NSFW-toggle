@@ -17,3 +17,8 @@ token = "" # webhook token
 cmd = "" # emoji | only required with default or `cmd_log` feature
 join_server = "" # emoji | only required with default or `server_log` feature
 leave_server = "" # emoji | only required with default or `server_log` feature
+
+# only required if compiled with `bot_list_guild_count` feature
+[[bot_lists]]
+name = "" # the bot list name
+auth = "" # auth token
