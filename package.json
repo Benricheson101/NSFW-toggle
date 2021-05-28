@@ -8,10 +8,10 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "discord-interactions": "^2.0.2",
-    "dotenv": "^10.0.0"
+    "discord-interactions": "^2.0.2"
   },
   "devDependencies": {
+    "dotenv": "^10.0.0",
     "eslint": "^7.27.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.3.0",
