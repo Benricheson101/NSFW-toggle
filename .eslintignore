@@ -1,0 +1,5 @@
+rollup.config.js
+__sapper__/
+scripts/
+static/
+node_modules/
