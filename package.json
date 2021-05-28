@@ -1,19 +1,18 @@
 {
   "name": "nsfw-toggle",
   "version": "1.0.0",
-  "main": "api/index.js",
+  "main": "index.js",
   "license": "MIT",
   "scripts": {
     "fmt": "prettier --write .",
-    "build": "yarn",
-    "start": "node index.js"
+    "start": "node -r dotenv/config index.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "dotenv": "^10.0.0",
     "noble-ed25519": "^1.2.2"
   },
   "devDependencies": {
-    "dotenv": "^10.0.0",
     "eslint": "^7.27.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.3.0",
