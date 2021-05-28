@@ -1,9 +1,4 @@
-const {
-  verifyKey,
-  InteractionType,
-  InteractionResponseType,
-} = require('discord-interactions');
-
+const {verify} = require('noble-ed25519');
 const axios = require('axios');
 
 const {PING_COMMAND, TOGGLE_COMMAND} = require('./cmds');
@@ -23,7 +18,7 @@ createCommands([PING_COMMAND, TOGGLE_COMMAND], {
 module.exports = async (req, res) => {
   switch (req.method) {
     case 'GET': {
-      return res.redirect('<invite here>');
+      return res.status(200).send('it works!');
     }
 
     case 'POST': {
@@ -31,7 +26,14 @@ module.exports = async (req, res) => {
       const time = req.headers['x-signature-timestamp'];
       const body = JSON.stringify(req.body);
 
-      const isValid = verifyKey(body, sig, time, PUBLIC_KEY);
+      const isValid = await verify(
+        sig,
+        Buffer.concat([
+          Buffer.from(time, 'utf8'),
+          Buffer.from(JSON.stringify(body)),
+        ]),
+        PUBLIC_KEY
+      );
 
       if (!isValid) {
         return res.status(401);
@@ -39,11 +41,11 @@ module.exports = async (req, res) => {
 
       const msg = req.body;
 
-      if (msg.type === InteractionType.PING) {
+      if (msg.type === 1) {
         return res.send({
-          type: InteractionResponseType.PONG,
+          type: 1,
         });
-      } else if (msg.type === InteractionType.APPLICATION_COMMAND) {
+      } else if (msg.type === 2) {
         switch (msg.data.name.toLowerCase()) {
           // /toggle channel: 123
           case TOGGLE_COMMAND.name: {
@@ -52,7 +54,7 @@ module.exports = async (req, res) => {
 
             if ((perms & (1n << 4n)) !== 1n << 4n) {
               return res.status(200).send({
-                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                type: 4,
                 data: {
                   content:
                     ':x: You do not have permission to use this command. You must have at least `MANAGE_CHANNELS`',
@@ -79,7 +81,7 @@ module.exports = async (req, res) => {
 
               if (toUpdate?.data?.type !== 0) {
                 return res.status(200).send({
-                  type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                  type: 4,
                   data: {
                     content: ':x: NSFW can only be toggled for text channels',
                     flags: 64,
@@ -102,7 +104,7 @@ module.exports = async (req, res) => {
               }
 
               return res.status(200).send({
-                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                type: 4,
                 data: {
                   content: m,
                   flags: 64,
@@ -120,7 +122,7 @@ module.exports = async (req, res) => {
               }
 
               return res.status(200).send({
-                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                type: 4,
                 data: {
                   content: errorMessage,
                   flags: 64,
@@ -134,7 +136,7 @@ module.exports = async (req, res) => {
           // /ping
           case PING_COMMAND.name.toLowerCase(): {
             return res.status(200).send({
-              type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+              type: 4,
               data: {
                 content: 'Pong!',
                 flags: 64,

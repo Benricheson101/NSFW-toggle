@@ -4,11 +4,13 @@
   "main": "api/index.js",
   "license": "MIT",
   "scripts": {
-    "fmt": "prettier --write ."
+    "fmt": "prettier --write .",
+    "build": "yarn",
+    "start": "node index.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "discord-interactions": "^2.0.2"
+    "noble-ed25519": "^1.2.2"
   },
   "devDependencies": {
     "dotenv": "^10.0.0",
