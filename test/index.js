@@ -1,3 +1,5 @@
+require('dotenv/config');
+
 const handleCommand = require('../api/index');
 const express = require('express');
 
