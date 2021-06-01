@@ -1,8 +1,8 @@
 const {verify} = require('noble-ed25519');
 const axios = require('axios');
 
-const {PING_COMMAND, TOGGLE_COMMAND} = require('./cmds');
-const {createCommands} = require('./createCmds');
+const {PING_COMMAND, TOGGLE_COMMAND} = require('../lib/cmds');
+const {createCommands} = require('../lib/createCmds');
 
 const PUBLIC_KEY = process.env.PUBLIC_KEY;
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -18,7 +18,7 @@ createCommands([PING_COMMAND, TOGGLE_COMMAND], {
 module.exports = async (req, res) => {
   switch (req.method) {
     case 'GET': {
-      return res.status(200).send('it works!');
+      return res.status(200).send('pong');
     }
 
     case 'POST': {
