@@ -1,10 +1,16 @@
 const {verify} = require('noble-ed25519');
 const axios = require('axios');
 
-const {PING_COMMAND, TOGGLE_COMMAND} = require('./cmds');
+const {
+  PING_COMMAND,
+  TOGGLE_COMMAND,
+  INVITE_COMMAND,
+  SUPPORT_COMMAND,
+} = require('./cmds');
 
 const PUBLIC_KEY = process.env.PUBLIC_KEY;
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+const CLIENT_ID = process.env.CLIENT_ID;
 
 module.exports = async (req, res) => {
   switch (req.method) {
@@ -127,6 +133,28 @@ module.exports = async (req, res) => {
               type: 4,
               data: {
                 content: 'Pong!',
+                flags: 64,
+              },
+            });
+          }
+
+          // /support
+          case INVITE_COMMAND.name.toLowerCase(): {
+            return res.status(200).send({
+              type: 4,
+              data: {
+                content: `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&permissions=16&scope=applications.commands%20bot`,
+                flags: 64,
+              },
+            });
+          }
+
+          // /support
+          case SUPPORT_COMMAND.name.toLowerCase(): {
+            return res.status(200).send({
+              type: 4,
+              data: {
+                content: 'https://discord.gg/KFYv6Fv',
                 flags: 64,
               },
             });

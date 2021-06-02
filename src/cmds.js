@@ -16,4 +16,19 @@ const PING_COMMAND = {
   description: 'Pong!',
 };
 
-module.exports = {TOGGLE_COMMAND, PING_COMMAND};
+const INVITE_COMMAND = {
+  name: 'invite',
+  description: 'Invite the bot',
+};
+
+const SUPPORT_COMMAND = {
+  name: 'support',
+  description: 'Join the support server',
+};
+
+module.exports = {
+  TOGGLE_COMMAND,
+  PING_COMMAND,
+  INVITE_COMMAND,
+  SUPPORT_COMMAND,
+};
