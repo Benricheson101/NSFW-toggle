@@ -5,12 +5,15 @@
   "license": "MIT",
   "scripts": {
     "fmt": "prettier --write .",
-    "start": "node -r dotenv/config index.js"
+    "start:dev": "node -r dotenv/config api/index.js"
+  },
+  "engines": {
+    "node": "14.x"
   },
   "dependencies": {
     "axios": "^0.21.1",
     "dotenv": "^10.0.0",
-    "noble-ed25519": "^1.2.2"
+    "noble-ed25519": "^1.2.3"
   },
   "devDependencies": {
     "eslint": "^7.27.0",

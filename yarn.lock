@@ -812,7 +812,7 @@ negotiator@0.6.2:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.2.tgz#feacf7ccf525a77ae9634436a64883ffeca346fb"
   integrity sha512-hZXc7K2e+PgeI1eDBe/10Ard4ekbfrrqG8Ep+8Jmf4JID2bNg7NvCPOZN+kfF574pFQI7mum2AUqDidoKqcTOw==
 
-noble-ed25519@^1.2.2:
+noble-ed25519@^1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/noble-ed25519/-/noble-ed25519-1.2.3.tgz#0526486d75a25fb0ec4711c86cdb24858fca0eca"
   integrity sha512-xc634JPGTXSEniGfyFJ3o5fTkty/tz+nIXGhpuhmbSUKcy8I2xoVFycQ9F8zlNsnz/a4QVcyHWTbQWsDGpzPVg==

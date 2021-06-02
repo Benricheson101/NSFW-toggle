@@ -1,8 +1,10 @@
+require('dotenv/config');
+
 const {verify} = require('noble-ed25519');
 const axios = require('axios');
 
-const {PING_COMMAND, TOGGLE_COMMAND} = require('../lib/cmds');
-const {createCommands} = require('../lib/createCmds');
+const {PING_COMMAND, TOGGLE_COMMAND} = require('../src/cmds');
+const {createCommands} = require('../src/createCmds');
 
 const PUBLIC_KEY = process.env.PUBLIC_KEY;
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -28,10 +30,7 @@ module.exports = async (req, res) => {
 
       const isValid = await verify(
         sig,
-        Buffer.concat([
-          Buffer.from(time, 'utf8'),
-          Buffer.from(JSON.stringify(body)),
-        ]),
+        Buffer.concat([Buffer.from(time, 'utf8'), Buffer.from(body)]),
         PUBLIC_KEY
       );
 
