@@ -8,7 +8,8 @@
     "build": "rollup -c",
     "deploy": "node deploy.js",
     "clean": "rm -rf api",
-    "start:dev": "node -r dotenv/config api/index.js"
+    "start:dev": "node -r dotenv/config api/index.js",
+    "prepare": "rollup -c"
   },
   "engines": {
     "node": "14.x"
