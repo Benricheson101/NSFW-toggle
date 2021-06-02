@@ -1,5 +1,6 @@
 /node_modules
 /api
+!/api/.gitkeep
 .env
 *.vim
 

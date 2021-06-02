@@ -7,7 +7,7 @@
     "fmt": "prettier --write .",
     "deploy": "node deploy.js",
     "clean": "rm -rf api",
-    "start:dev": "node -r dotenv/config api/index.js",
+    "start:dev": "node test/index.js",
     "prepare": "rollup -c"
   },
   "engines": {
