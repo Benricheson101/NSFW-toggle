@@ -1,7 +1,7 @@
 const {verify} = require('noble-ed25519');
 const axios = require('axios');
 
-const {PING_COMMAND, TOGGLE_COMMAND} = require('../src/cmds');
+const {PING_COMMAND, TOGGLE_COMMAND} = require('./cmds');
 
 const PUBLIC_KEY = process.env.PUBLIC_KEY;
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
