@@ -154,7 +154,7 @@ module.exports = async (req, res) => {
             return res.status(200).send({
               type: 4,
               data: {
-                content: 'https://discord.gg/KFYv6Fv',
+                content: 'https://discord.gg/4XxKauQfP3',
                 flags: 64,
               },
             });
